@@ -12,24 +12,41 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { access } from "fs";
-
 import Link from "next/link";
+import { useState } from "react";
 import { useEffect } from "react";
 import { RiAddLine, RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
-
 import { SideBar } from "../../components/SideBar";
 import { api } from "../../services/api";
 
+
+
 export default function HospedeList() {
+  const [data, setData] = useState([]);
+  const [hospedeId, setHospedeId] = useState(0);
 
-  
+  async function deleteHospede(hospede) {
+    setHospedeId(hospede.id)
+    console.log(hospedeId)
+    try {
+      await api.delete(`hospedes/${hospedeId}`);
+      getItems()
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function getItems() {
+    try {
+      const response = await api.get("hospedes");
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
-    api
-      .get("hospedes")
-
-      .then((data) => console.log(data));
+    getItems();
   }, []);
 
   return (
@@ -58,6 +75,7 @@ export default function HospedeList() {
           <Table colorScheme="whiteAlpha">
             <Thead>
               <Tr>
+                <Th>ID</Th>
                 <Th>Hospede</Th>
                 <Th>Telefone</Th>
                 <Th>Nacionalidade</Th>
@@ -66,114 +84,47 @@ export default function HospedeList() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>
-                  <Text fontWeight="bold">Riad Younes</Text>
-                  <Text fontSize="sm" color="gray.300">
-                    riad.younes@hotmail.com
-                  </Text>
-                </Td>
-                <Td>
-                  <Text>99999-9999</Text>
-                </Td>
-                <Td>
-                  <Text>Brasil</Text>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="yellow"
-                    leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="red"
-                    leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
-                  >
-                    Excluir
-                  </Button>
-                </Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Text fontWeight="bold">Riad Younes</Text>
-                  <Text fontSize="sm" color="gray.300">
-                    riad.younes@hotmail.com
-                  </Text>
-                </Td>
-                <Td>
-                  <Text>99999-9999</Text>
-                </Td>
-                <Td>
-                  <Text>Brasil</Text>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="yellow"
-                    leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="red"
-                    leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
-                  >
-                    Excluir
-                  </Button>
-                </Td>
-              </Tr>
-              <Tr>
-                <Td>
-                  <Text fontWeight="bold">Riad Younes</Text>
-                  <Text fontSize="sm" color="gray.300">
-                    riad.younes@hotmail.com
-                  </Text>
-                </Td>
-                <Td>
-                  <Text>99999-9999</Text>
-                </Td>
-                <Td>
-                  <Text>Brasil</Text>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="yellow"
-                    leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                  >
-                    Editar
-                  </Button>
-                </Td>
-                <Td>
-                  <Button
-                    as="a"
-                    size="sm"
-                    fontSize="sm"
-                    colorScheme="red"
-                    leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
-                  >
-                    Excluir
-                  </Button>
-                </Td>
-              </Tr>
+              {data.map((hospede) => (
+                <Tr key={hospede.id}>
+                  <Td>{hospede.id}</Td>
+                  <Td>
+                    <Text fontWeight="bold">{hospede.nome}</Text>
+                    <Text fontSize="sm" color="gray.300">
+                      {hospede.email}
+                    </Text>
+                  </Td>
+                  <Td>
+                    <Text>{hospede.telefone}</Text>
+                  </Td>
+                  <Td>
+                    <Text>{hospede.nacionalidade}</Text>
+                  </Td>
+                  <Td>
+                    <Button
+                      as="a"
+                      size="sm"
+                      fontSize="sm"
+                      colorScheme="yellow"
+                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                    >
+                      Editar
+                    </Button>
+                  </Td>
+                  <Td>
+                    <Button
+                      as="a"
+                      size="sm"
+                      fontSize="sm"
+                      colorScheme="red"
+                      leftIcon={<Icon as={RiDeleteBinLine} fontSize="16"
+                      onClick={() => deleteHospede(hospede)}
+                      />}
+                    >
+                      Excluir
+                    </Button>
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </Box>
