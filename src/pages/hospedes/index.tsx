@@ -117,7 +117,7 @@ export default function HospedeList() {
                       fontSize="sm"
                       colorScheme="red"
                       leftIcon={<Icon as={RiDeleteBinLine} fontSize="16"
-                      onClick={() => deleteHospede(hospede)}
+                        onClick={() => deleteHospede(hospede)}
                       />}
                     >
                       Excluir
