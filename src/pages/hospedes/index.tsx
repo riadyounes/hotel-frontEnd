@@ -20,18 +20,16 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import { api } from "../../services/api";
 
-
-
 export default function HospedeList() {
   const [data, setData] = useState([]);
   const [hospedeId, setHospedeId] = useState(0);
 
   async function deleteHospede(hospede) {
-    setHospedeId(hospede.id)
-    console.log(hospedeId)
+    setHospedeId(hospede.id);
+    console.log(hospedeId);
     try {
       await api.delete(`hospedes/${hospedeId}`);
-      getItems()
+      getItems();
     } catch (error) {
       console.log(error);
     }
@@ -100,15 +98,17 @@ export default function HospedeList() {
                     <Text>{hospede.nacionalidade}</Text>
                   </Td>
                   <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="yellow"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
-                    >
-                      Editar
-                    </Button>
+                    <Link href="/hospedes/edit">
+                      <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="yellow"
+                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
+                      >
+                        Editar
+                      </Button>
+                    </Link>
                   </Td>
                   <Td>
                     <Button
@@ -116,9 +116,13 @@ export default function HospedeList() {
                       size="sm"
                       fontSize="sm"
                       colorScheme="red"
-                      leftIcon={<Icon as={RiDeleteBinLine} fontSize="16"
-                        onClick={() => deleteHospede(hospede)}
-                      />}
+                      leftIcon={
+                        <Icon
+                          as={RiDeleteBinLine}
+                          fontSize="16"
+                          onClick={() => deleteHospede(hospede)}
+                        />
+                      }
                     >
                       Excluir
                     </Button>

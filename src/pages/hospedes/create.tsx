@@ -8,7 +8,7 @@ import {
   SimpleGrid,
   VStack,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
@@ -19,8 +19,6 @@ import { useState } from "react";
 import { useCallback } from "react";
 import { api } from "../../services/api";
 
-
-
 const CreateUserFormSchema = yup.object().shape({
   nome: yup.string().required("Nome obrigatório"),
   email: yup
@@ -29,7 +27,7 @@ const CreateUserFormSchema = yup.object().shape({
     .email("Digite um e-mail válido"),
   cpf: yup.string().required("CPF obrigatório"),
   nacionalidade: yup.string().required("Nacionalidade obrigatório"),
-  telefone: yup.number().required("Telefone obrigatório")
+  telefone: yup.number().required("Telefone obrigatório"),
 });
 
 export default function CreateHospede() {
@@ -45,12 +43,10 @@ export default function CreateHospede() {
   });
 
   const { errors } = formState;
-
+  
   const createHospede = useCallback(async (data) => {
-    
     try {
       await api.post("hospedes", data);
-      
     } catch (error) {
       console.log(error.error);
     }
@@ -108,9 +104,8 @@ export default function CreateHospede() {
                   type="number"
                   label="Telefone"
                   error={errors.telefone}
-
                   {...register("telefone")}
-                  
+                  value={telefone}
                   onChange={(event) => setTelefone(Number(event.target.value))}
                 />
               </SimpleGrid>
@@ -120,7 +115,6 @@ export default function CreateHospede() {
                   type="date"
                   label="Data de nascimento"
                   error={errors.data_nascimento}
-
                   {...register("data_nascimento")}
                   value={data_nascimento}
                   onChange={(event) => setDataNascimento(event.target.value)}
@@ -129,7 +123,6 @@ export default function CreateHospede() {
                   name="nacionalidade"
                   label="Nacionalidade"
                   error={errors.nacionalidade}
-
                   {...register("nacionalidade")}
                   value={nacionalidade}
                   onChange={(event) => setNacionalidade(event.target.value)}
