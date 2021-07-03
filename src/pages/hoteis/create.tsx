@@ -15,28 +15,44 @@ import Link from "next/link";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
+import { useState, useCallback } from "react";
+import { api } from "../../services/api";
 
 type CreateHotelFormData = {
   name: string;
 };
 
 const CreateHotelFormSchema = yup.object().shape({
-  name: yup.string().required("Nome obrigatório"),
+  nome: yup.string().required("Nome obrigatório"),
+  logradouro: yup.string().required("Logradouro obrigatório"),
+  numero: yup.number().required("Número obrigatório"),
+  cidade: yup.string().required("Cidade obrigatório"),
+  estado: yup.string().required("Estado obrigatório"),
 });
 
 export default function CreateHotel() {
+  const [nome, setNome] = useState("");
+  const [classificacao, setClassificacao] = useState(0);
+  const [logradouro, setLogradouro] = useState("");
+  const [numero, setNumero] = useState(0);
+  const [complemento, setComplemento] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+  
   const { register, handleSubmit, formState } = useForm({
     resolver: yupResolver(CreateHotelFormSchema),
   });
 
   const { errors } = formState;
 
-  const handleCreateHotel: SubmitHandler<CreateHotelFormData> = async (
-    values
-  ) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(values);
-  };
+  const createHotel = useCallback(async (data) => {
+    try {
+      await api.post("hoteis", data);
+    } catch (error) {
+      console.log(error.error);
+    }
+  }, []);
+
   return (
     <Box>
       <Header />
@@ -48,7 +64,7 @@ export default function CreateHotel() {
           borderRadius={8}
           bg="gray.800"
           p="8"
-          onSubmit={handleSubmit(handleCreateHotel)}
+          onSubmit={handleSubmit(createHotel)}
         >
           <Heading fontSize="lg" fontWeight="normal">
             Criar hospede
@@ -57,23 +73,68 @@ export default function CreateHotel() {
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
               <Input
-                name="name"
+                name="nome"
                 label="Nome do Hotel"
-                error={errors.name}
-                {...register("name")}
+                error={errors.nome}
+                {...register("nome")}
+                value={nome}
+                onChange={(event) => setNome(event.target.value)}
               />
-              <Input name="classificacao" label="Classificação" type="number" />
+              <Input 
+                name="classificacao" 
+                label="Classificação" 
+                type="number" 
+                error={errors.classificacao}
+                {...register("classificacao")}
+                value={classificacao}
+                onChange={(event) => setClassificacao(Number(event.target.value))}
+                />
             </SimpleGrid>
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <Input name="logradouro" label="Rua" />
-              <Input name="numero" type="number" label="Número" />
+              <Input 
+                name="logradouro"
+                label="Rua"
+                error={errors.logradouro}
+                {...register("logradouro")}
+                value={logradouro}
+                onChange={(event) => setLogradouro(event.target.value)}
+                />
+              <Input 
+                name="numero"
+                type="number" 
+                label="Número" 
+                error={errors.numero}
+                {...register("numero")}
+                value={numero}
+                onChange={(event) => setNumero(Number(event.target.value))}
+                />
             </SimpleGrid>
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <Input name="complemento" label="Complemento" />
-              <Input name="cidade" label="Cidade" />
-              <Input name="estado" label="Estado" />
-            </SimpleGrid>
-            
+              <Input 
+                name="complemento"
+                label="Complemento"
+                error={errors.complemento}
+                {...register("complemento")}
+                value={complemento}
+                onChange={(event) => setComplemento(event.target.value)}
+                />
+              <Input 
+                name="cidade" 
+                label="Cidade" 
+                error={errors.cidade}
+                {...register("cidade")}
+                value={cidade}
+                onChange={(event) => setCidade(event.target.value)}                
+                />
+              <Input 
+                name="estado" 
+                label="Estado" 
+                error={errors.estado}
+                {...register("estado")}
+                value={estado}
+                onChange={(event) => setEstado(event.target.value)}
+                />
+            </SimpleGrid> 
           </VStack>
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">

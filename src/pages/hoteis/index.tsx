@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   Heading,
   Icon,
@@ -14,12 +13,39 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { RiAddLine, RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 
 import { SideBar } from "../../components/SideBar";
+import { api } from "../../services/api";
 
-export default function HospedeList() {
+export default function HotelList() {
+  const [data, setData] = useState([]);
+  const [hotelId, setHotelId] = useState(0);
+
+  async function deleteHotel(hotel) {
+    setHotelId(hotel.id);
+    console.log(hotelId);
+    try {
+      await api.delete(`hoteis/${hotelId}`);
+      getItems();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function getItems() {
+    try {
+      const response = await api.get("hoteis");
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getItems();
+  }, []);
   return (
     <Box>
       <Header />
@@ -46,24 +72,25 @@ export default function HospedeList() {
           <Table colorScheme="whiteAlpha">
             <Thead>
               <Tr>
+                <Th>Id</Th>
                 <Th>Hotel</Th>
                 <Th>Classifição</Th>
-                <Th>Cidade</Th>
 
                 <Th width="8"></Th>
                 <Th width="8"></Th>
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
+            {data.map((hotel) => (
+              <Tr key={hotel.id}>
                 <Td>
-                  <Text fontWeight="bold">Palace</Text>
+                  <Text>{hotel.id}</Text>
                 </Td>
                 <Td>
-                  <Text>4</Text>
+                  <Text fontWeight="bold">{hotel.nome}</Text>
                 </Td>
                 <Td>
-                  <Text>Foz do Iguaçu</Text>
+                  <Text>{hotel.classificacao}</Text>
                 </Td>
 
                 <Td>
@@ -86,12 +113,17 @@ export default function HospedeList() {
                     size="sm"
                     fontSize="sm"
                     colorScheme="red"
-                    leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
+                    leftIcon={<Icon as={RiDeleteBinLine} 
+                    fontSize="16"
+                    onClick={() => deleteHotel(hotel)}
+                    />
+                  }
                   >
                     Excluir
                   </Button>
                 </Td>
               </Tr>
+            ))}
             </Tbody>
           </Table>
         </Box>

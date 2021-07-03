@@ -97,16 +97,18 @@ export default function QuartoList() {
                   </Td>
 
                   <Td>
-                    <Button
-                      as="a"
-                      size="sm"
-                      fontSize="sm"
-                      colorScheme="yellow"
-                      leftIcon={<Icon as={RiPencilLine} fontSize="16"
-                    />}
-                    >
-                      Editar
-                    </Button>
+                    <Link href="/quartos/edit">
+                      <Button
+                        as="a"
+                        size="sm"
+                        fontSize="sm"
+                        colorScheme="yellow"
+                        leftIcon={<Icon as={RiPencilLine} fontSize="16"
+                      />}
+                      >
+                        Editar
+                      </Button>
+                    </Link>
                   </Td>
                   <Td>
                     <Button
