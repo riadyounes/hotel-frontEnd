@@ -9,26 +9,17 @@ import {
   VStack,
   Select,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import * as yup from "yup";
-import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
-import { useState } from "react";
 import { useCallback } from "react";
 import { api } from "../../services/api";
 
-export default function CreateQuarto() {
-  const [numero, setNumero] = useState(0);
-  const [preco, setPreco] = useState(0);
-  const [quant_ocupacao, setQuant_ocupacao] = useState(0);
-  const [detalhes, setDetalhes] = useState("descrição");
-
-  const createQuarto = useCallback(async (data) => {
+export default function CreateReserva() {
+  const createReserva = useCallback(async (data) => {
     try {
-      await api.post("quartos", data);
+      await api.post("reservas", data);
     } catch (error) {
       console.log(error.error);
     }
@@ -45,7 +36,7 @@ export default function CreateQuarto() {
           borderRadius={8}
           bg="gray.800"
           p="8"
-          onSubmit={createQuarto}
+          onSubmit={createReserva}
         >
           <Heading fontSize="lg" fontWeight="normal">
             Criar reserva
@@ -53,7 +44,8 @@ export default function CreateQuarto() {
           <Divider my="6" borderColor="gray.700" />
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <Input name="data_saida" label="Check-out" type="date" />
+              
+              <Input name="data_entrada" label="Check-In" type="date" />
               <Input name="data_saida" label="Check-out" type="date" />
               <Input name="preco_total" label="Preço" type="number" />
             </SimpleGrid>
@@ -84,7 +76,6 @@ export default function CreateQuarto() {
                 color="gray.900"
                 size="lg"
                 placeholder="Select country"
-                
               >
                 <option>United Arab Emirates</option>
                 <option>Nigeria</option>
