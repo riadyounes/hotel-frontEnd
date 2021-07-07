@@ -9,17 +9,22 @@ import {
   VStack,
   Select,
 } from "@chakra-ui/react";
+
 import Link from "next/link";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
-import { useCallback } from "react";
-import { api } from "../../services/api";
+
+
 
 export default function CreateReserva() {
   const createReserva = useCallback(async (data) => {
     try {
       await api.post("reservas", data);
+
+
+
+
     } catch (error) {
       console.log(error.error);
     }
@@ -36,7 +41,9 @@ export default function CreateReserva() {
           borderRadius={8}
           bg="gray.800"
           p="8"
+
           onSubmit={createReserva}
+
         >
           <Heading fontSize="lg" fontWeight="normal">
             Criar reserva
@@ -44,8 +51,10 @@ export default function CreateReserva() {
           <Divider my="6" borderColor="gray.700" />
           <VStack spacing="8">
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
+
               
               <Input name="data_entrada" label="Check-In" type="date" />
+
               <Input name="data_saida" label="Check-out" type="date" />
               <Input name="preco_total" label="Preço" type="number" />
             </SimpleGrid>
@@ -76,6 +85,7 @@ export default function CreateReserva() {
                 color="gray.900"
                 size="lg"
                 placeholder="Select country"
+
               >
                 <option>United Arab Emirates</option>
                 <option>Nigeria</option>

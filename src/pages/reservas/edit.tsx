@@ -20,6 +20,7 @@ import {
   import { useCallback } from "react";
   import { api } from "../../services/api";
   
+
   export default function CreateReserva() {
   
   
@@ -30,7 +31,7 @@ import {
          console.log(error.error);
        }
      }, []);
-  
+
     return (
       <Box>
         <Header />
@@ -42,7 +43,9 @@ import {
             borderRadius={8}
             bg="gray.800"
             p="8"
+
             onSubmit={createReserva}
+
           >
             <Heading fontSize="lg" fontWeight="normal">
               Editar reserva
