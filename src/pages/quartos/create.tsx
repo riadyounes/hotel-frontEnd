@@ -8,28 +8,32 @@ import {
   SimpleGrid,
   VStack,
   useToast,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
-import { Input } from "../../components/Form/Input";
-import { Header } from "../../components/Header";
-import { SideBar } from "../../components/SideBar";
-import SelectAsync from "../../components/SelectAsync";
-import { useState } from "react";
-import { useCallback } from "react";
-import { api } from "../../services/api";
+import { Input } from "components/Form/Input";
+import { Header } from "components/Header";
+import { SideBar } from "components/SideBar";
+import { useState, useEffect, useCallback } from "react";
+import { api } from "services/api";
 
 const CreateQuartoFormSchema = yup.object().shape({
   numero: yup.string().required("Número é obrigatório"),
   preco: yup.number().required("Preço é obrigatório"),
   quant_ocupacao: yup.number().required("Ocupação é obrigatório"),
   detalhes: yup.string().required("Detalhes é obrigatório"),
+  hotel: yup.object().shape({
+    id: yup.number().required("Hotel é obrigatório"),
+  }),
 });
 
 export default function CreateQuarto() {
   const toast = useToast();
+  const [hoteis, setHoteis] = useState([]);
   const [numero, setNumero] = useState("");
   const [preco, setPreco] = useState(0);
   const [quant_ocupacao, setQuant_ocupacao] = useState(0);
@@ -49,7 +53,7 @@ export default function CreateQuarto() {
         isClosable: true,
       });
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
       toast({
         title: "Problema ao criar quarto.",
         status: "error",
@@ -59,20 +63,24 @@ export default function CreateQuarto() {
     }
   }, []);
 
-  const handleHoteisOptions = useCallback(async () => {
-    const response = await api.get("/hoteis");
+  async function getHoteis() {
+    try {
+      const response = await api.get("hoteis");
+      setHoteis(response.data);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Problema ao carregar hoteis.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
 
-    const options = response.data.map((value) =>
-      mapResponseToValuesAndLabels(value)
-    );
-
-    return options;
+  useEffect(() => {
+    getHoteis();
   }, []);
-
-  const mapResponseToValuesAndLabels = (data) => ({
-    value: data.id,
-    label: data.nome,
-  });
 
   return (
     <Box>
@@ -134,20 +142,20 @@ export default function CreateQuarto() {
               />
             </SimpleGrid>
 
-            {/* <SelectAsync
-              name="hotel"
-              type="text"
-              label="Hotel"
-              loadOptions={handleHoteisOptions}
-              defaultOptions
-              placeholder="Selecione o hotel"
-              required
-            /> */}
-
-            {/* <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
+            <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
               <FormLabel htmlFor="hotel">Hotel</FormLabel>
-              <AsyncSelect name="hotel" defaultOptions loadOptions={handleHoteisOptions}/>
-            </SimpleGrid> */}
+              <Select
+                name="hotel"
+                id="hotel"
+                placeholder="Selecione o hotel"
+                error={errors.hotel?.id}
+                {...register("hotel.id")}
+              >
+                {hoteis.map((hotel) => (
+                  <option value={hotel.id}>{hotel.name}</option>
+                ))}
+              </Select>
+            </SimpleGrid>
           </VStack>
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">

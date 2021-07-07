@@ -8,10 +8,11 @@ import {
   HStack,
   SimpleGrid,
   VStack,
-  Select,
   useToast,
+  FormLabel,
+  Select,
 } from "@chakra-ui/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Link from "next/link";
@@ -26,16 +27,21 @@ const EditQuartoFormSchema = yup.object().shape({
   preco: yup.number().required("Preço é obrigatório"),
   quant_ocupacao: yup.number().required("Ocupação é obrigatório"),
   detalhes: yup.string().required("Detalhes é obrigatório"),
+  hotel: yup.object().shape({
+    id: yup.number().required("Hotel é obrigatório"),
+  }),
 });
 
 export default function EditQuarto() {
   const toast = useToast();
   const router = useRouter();
   const { id } = router.query;
+  const [hoteis, setHoteis] = useState([]);
   const [numero, setNumero] = useState();
   const [preco, setPreco] = useState(0);
   const [quant_ocupacao, setQuant_ocupacao] = useState(0);
   const [detalhes, setDetalhes] = useState("descrição");
+  const [hotel, setHotel] = useState();
   const { formState, register, handleSubmit } = useForm({
     resolver: yupResolver(EditQuartoFormSchema),
   });
@@ -47,6 +53,7 @@ export default function EditQuarto() {
       setPreco(response.data.preco);
       setQuant_ocupacao(response.data.quant_ocupacao);
       setDetalhes(response.data.detalhes);
+      setHotel(response.data.hotel.id);
     } catch (error) {
       console.log(error);
       toast({
@@ -58,8 +65,24 @@ export default function EditQuarto() {
     }
   }
 
+  async function getHoteis() {
+    try {
+      const response = await api.get("hoteis");
+      setHoteis(response.data);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Problema ao carregar hoteis.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  }
+
   useEffect(() => {
     getItem();
+    getHoteis();
   }, []);
 
   const { errors } = formState;
@@ -73,7 +96,7 @@ export default function EditQuarto() {
         isClosable: true,
       });
     } catch (error) {
-      console.log(error.error);
+      console.log(error);
       toast({
         title: "Problema ao editar quarto.",
         status: "error",
@@ -144,9 +167,18 @@ export default function EditQuarto() {
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <Select placeholder="Select country" isDisabled>
-                <option>United Arab Emirates</option>
-                <option>Nigeria</option>
+              <FormLabel htmlFor="hotel">Hotel</FormLabel>
+              <Select
+                name="hotel"
+                id="hotel"
+                placeholder="Selecione o hotel"
+                error={errors.hotel?.id}
+                value={hotel}
+                {...register("hotel.id")}
+              >
+                {hoteis.map((hotel) => (
+                  <option value={hotel.id}>{hotel.name}</option>
+                ))}
               </Select>
             </SimpleGrid>
           </VStack>
