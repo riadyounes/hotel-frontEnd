@@ -20,20 +20,18 @@ import {
   import { useCallback } from "react";
   import { api } from "../../services/api";
   
-  export default function CreateQuarto() {
-    const [numero, setNumero] = useState(0);
-    const [preco, setPreco] = useState(0);
-    const [quant_ocupacao, setQuant_ocupacao] = useState(0);
-    const [detalhes, setDetalhes] = useState("descrição");
+
+  export default function CreateReserva() {
   
-    const createQuarto = useCallback(async (data) => {
-      try {
-        await api.post("quartos", data);
-      } catch (error) {
-        console.log(error.error);
-      }
-    }, []);
   
+     const createReserva = useCallback(async (data) => {
+       try {
+         await api.post("reservas", data);
+       } catch (error) {
+         console.log(error.error);
+       }
+     }, []);
+
     return (
       <Box>
         <Header />
@@ -45,7 +43,9 @@ import {
             borderRadius={8}
             bg="gray.800"
             p="8"
-            onSubmit={createQuarto}
+
+            onSubmit={createReserva}
+
           >
             <Heading fontSize="lg" fontWeight="normal">
               Editar reserva
