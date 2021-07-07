@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useToast,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -26,6 +27,7 @@ import { SideBar } from "components/SideBar";
 import { api } from "services/api";
 
 export default function QuartoList() {
+  const toast = useToast();
   const [data, setData] = useState([]);
   const [quartoId, setQuartoId] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,8 +44,20 @@ export default function QuartoList() {
       await api.delete(`quartos/${quartoId}`);
       setIsOpen(false);
       getItems();
+      toast({
+        title: "Quarto apagado.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Problema ao apagar quarto.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
   async function getItems() {
@@ -52,6 +66,12 @@ export default function QuartoList() {
       setData(response.data);
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Problema ao carregar quartos.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
   useEffect(() => {
