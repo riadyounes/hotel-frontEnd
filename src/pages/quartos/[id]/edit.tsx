@@ -9,6 +9,7 @@ import {
   SimpleGrid,
   VStack,
   Select,
+  useToast,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -28,9 +29,9 @@ const EditQuartoFormSchema = yup.object().shape({
 });
 
 export default function EditQuarto() {
+  const toast = useToast();
   const router = useRouter();
   const { id } = router.query;
-  const [data, setData] = useState();
   const [numero, setNumero] = useState();
   const [preco, setPreco] = useState(0);
   const [quant_ocupacao, setQuant_ocupacao] = useState(0);
@@ -42,15 +43,21 @@ export default function EditQuarto() {
   async function getItem() {
     try {
       const response = await api.get(`quartos/${id}`);
-      setData(response.data);
       setNumero(response.data.numero);
       setPreco(response.data.preco);
       setQuant_ocupacao(response.data.quant_ocupacao);
       setDetalhes(response.data.detalhes);
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Problema ao carregar quarto.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }
+
   useEffect(() => {
     getItem();
   }, []);
@@ -59,8 +66,20 @@ export default function EditQuarto() {
   const editQuarto = useCallback(async (data) => {
     try {
       await api.put(`quartos/${id}`, data);
+      toast({
+        title: "Quarto editado.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
       console.log(error.error);
+      toast({
+        title: "Problema ao editar quarto.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }, []);
 
