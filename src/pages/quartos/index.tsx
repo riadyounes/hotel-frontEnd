@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-
   Flex,
   Heading,
   Icon,
@@ -25,11 +24,11 @@ export default function QuartoList() {
   const [quartoId, setQuartoId] = useState(0);
 
   async function deleteQuarto(quarto) {
-    setQuartoId(quarto.id)
-    console.log(quartoId)
+    setQuartoId(quarto.id);
+    console.log(quartoId);
     try {
       await api.delete(`quartos/${quartoId}`);
-      getItems()
+      getItems();
     } catch (error) {
       console.log(error);
     }
@@ -87,7 +86,6 @@ export default function QuartoList() {
                   <Td>{quarto.id}</Td>
                   <Td>
                     <Text fontWeight="bold">{quarto.numero}</Text>
-
                   </Td>
                   <Td>
                     <Text>{quarto.preco}</Text>
@@ -97,14 +95,13 @@ export default function QuartoList() {
                   </Td>
 
                   <Td>
-                    <Link href="/quartos/edit">
+                    <Link href={`/quartos/${quarto.id}/edit`}>
                       <Button
                         as="a"
                         size="sm"
                         fontSize="sm"
                         colorScheme="yellow"
-                        leftIcon={<Icon as={RiPencilLine} fontSize="16"
-                      />}
+                        leftIcon={<Icon as={RiPencilLine} fontSize="16" />}
                       >
                         Editar
                       </Button>
@@ -116,19 +113,21 @@ export default function QuartoList() {
                       size="sm"
                       fontSize="sm"
                       colorScheme="red"
-                      leftIcon={<Icon as={RiDeleteBinLine} fontSize="16"
-                      onClick={() => deleteQuarto(quarto)}
-                      />}
+                      leftIcon={
+                        <Icon
+                          as={RiDeleteBinLine}
+                          fontSize="16"
+                          onClick={() => deleteQuarto(quarto)}
+                        />
+                      }
                     >
                       Excluir
                     </Button>
                   </Td>
-
                 </Tr>
               ))}
             </Tbody>
           </Table>
-
         </Box>
       </Flex>
     </Box>
