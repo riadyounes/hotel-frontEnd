@@ -7,7 +7,7 @@ import {
   HStack,
   SimpleGrid,
   VStack,
-  Select,
+  useToast,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -16,22 +16,24 @@ import Link from "next/link";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
+import SelectAsync from "../../components/SelectAsync";
 import { useState } from "react";
 import { useCallback } from "react";
 import { api } from "../../services/api";
 
 const CreateQuartoFormSchema = yup.object().shape({
-  numero: yup.number().required("Numero obrigatório"),
-  preco: yup.number().required("Numero obrigatório"),
-  quant_ocupacao: yup.number().required("Numero obrigatório"),
-  detalhes: yup.string().required("Numero obrigatório"),
+  numero: yup.string().required("Número é obrigatório"),
+  preco: yup.number().required("Preço é obrigatório"),
+  quant_ocupacao: yup.number().required("Ocupação é obrigatório"),
+  detalhes: yup.string().required("Detalhes é obrigatório"),
 });
 
 export default function CreateQuarto() {
-  const [numero, setNumero] = useState(0);
+  const toast = useToast();
+  const [numero, setNumero] = useState("");
   const [preco, setPreco] = useState(0);
   const [quant_ocupacao, setQuant_ocupacao] = useState(0);
-  const [detalhes, setDetalhes] = useState("descrição");
+  const [detalhes, setDetalhes] = useState("");
   const { formState, register, handleSubmit } = useForm({
     resolver: yupResolver(CreateQuartoFormSchema),
   });
@@ -40,10 +42,37 @@ export default function CreateQuarto() {
   const createQuarto = useCallback(async (data) => {
     try {
       await api.post("quartos", data);
+      toast({
+        title: "Quarto criado.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
     } catch (error) {
       console.log(error.error);
+      toast({
+        title: "Problema ao criar quarto.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
     }
   }, []);
+
+  const handleHoteisOptions = useCallback(async () => {
+    const response = await api.get("/hoteis");
+
+    const options = response.data.map((value) =>
+      mapResponseToValuesAndLabels(value)
+    );
+
+    return options;
+  }, []);
+
+  const mapResponseToValuesAndLabels = (data) => ({
+    value: data.id,
+    label: data.nome,
+  });
 
   return (
     <Box>
@@ -67,11 +96,11 @@ export default function CreateQuarto() {
               <Input
                 name="numero"
                 label="Número"
-                type="number"
+                type="text"
                 error={errors.numero}
                 {...register("numero")}
                 value={numero}
-                onChange={(event) => setNumero(Number(event.target.value))}
+                onChange={(event) => setNumero(event.target.value)}
               />
               <Input
                 name="preco"
@@ -105,13 +134,20 @@ export default function CreateQuarto() {
               />
             </SimpleGrid>
 
+            {/* <SelectAsync
+              name="hotel"
+              type="text"
+              label="Hotel"
+              loadOptions={handleHoteisOptions}
+              defaultOptions
+              placeholder="Selecione o hotel"
+              required
+            /> */}
+
             {/* <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <Select placeholder="Select country" isDisabled>
-                <option>United Arab Emirates</option>
-                <option>Nigeria</option>
-              </Select>
-                
-              </SimpleGrid> */}
+              <FormLabel htmlFor="hotel">Hotel</FormLabel>
+              <AsyncSelect name="hotel" defaultOptions loadOptions={handleHoteisOptions}/>
+            </SimpleGrid> */}
           </VStack>
           <Flex mt="8" justify="flex-end">
             <HStack spacing="4">
