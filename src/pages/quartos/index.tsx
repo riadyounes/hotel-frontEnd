@@ -11,23 +11,36 @@ import {
   Th,
   Thead,
   Tr,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { RiAddLine, RiDeleteBinLine, RiPencilLine } from "react-icons/ri";
-import { Header } from "../../components/Header";
-import { SideBar } from "../../components/SideBar";
-import { api } from "../../services/api";
+import { Header } from "components/Header";
+import { SideBar } from "components/SideBar";
+import { api } from "services/api";
 
 export default function QuartoList() {
   const [data, setData] = useState([]);
   const [quartoId, setQuartoId] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = useRef();
 
-  async function deleteQuarto(quarto) {
+  async function openDeleteQuarto(quarto) {
     setQuartoId(quarto.id);
-    console.log(quartoId);
+    setIsOpen(true);
+  }
+
+  async function deleteQuarto() {
     try {
       await api.delete(`quartos/${quartoId}`);
+      setIsOpen(false);
       getItems();
     } catch (error) {
       console.log(error);
@@ -51,6 +64,32 @@ export default function QuartoList() {
       <Flex w="100%" my="6" mx="auto" maxWidth={1480} px="6">
         <SideBar />
         <Box flex="1" borderRadius={8} bg="gray.800" p="8">
+          <AlertDialog
+            isOpen={isOpen}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Apagar Quarto
+                </AlertDialogHeader>
+
+                <AlertDialogBody>
+                  Tem certeza? Esta ação, é irreversível.
+                </AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button ref={cancelRef} onClick={onClose}>
+                    Cancelar
+                  </Button>
+                  <Button colorScheme="red" onClick={deleteQuarto} ml={3}>
+                    Apagar
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
           <Flex mb="8" justify="space-between" align="center">
             <Heading fontSize="lg" fontWeight="normal">
               Quartos
@@ -113,13 +152,8 @@ export default function QuartoList() {
                       size="sm"
                       fontSize="sm"
                       colorScheme="red"
-                      leftIcon={
-                        <Icon
-                          as={RiDeleteBinLine}
-                          fontSize="16"
-                          onClick={() => deleteQuarto(quarto)}
-                        />
-                      }
+                      onClick={() => openDeleteQuarto(quarto)}
+                      leftIcon={<Icon as={RiDeleteBinLine} fontSize="16" />}
                     >
                       Excluir
                     </Button>
