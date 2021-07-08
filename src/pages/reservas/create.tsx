@@ -11,13 +11,17 @@ import {
 } from "@chakra-ui/react";
 
 import Link from "next/link";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Input } from "../../components/Form/Input";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import { api } from "../../services/api";
 
 export default function CreateReserva() {
+  
+
+
+
   const createReserva = useCallback(async (data) => {
     try {
       await api.post("reservas", data);

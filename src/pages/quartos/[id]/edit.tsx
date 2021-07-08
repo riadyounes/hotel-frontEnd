@@ -9,7 +9,6 @@ import {
   SimpleGrid,
   VStack,
   useToast,
-  FormLabel,
   Select,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
@@ -37,10 +36,10 @@ export default function EditQuarto() {
   const router = useRouter();
   const { id } = router.query;
   const [hoteis, setHoteis] = useState([]);
-  const [numero, setNumero] = useState();
+  const [numero, setNumero] = useState(0);
   const [preco, setPreco] = useState(0);
   const [quant_ocupacao, setQuant_ocupacao] = useState(0);
-  const [detalhes, setDetalhes] = useState("descrição");
+  const [detalhes, setDetalhes] = useState("");
   const [hotel, setHotel] = useState();
   const { formState, register, handleSubmit } = useForm({
     resolver: yupResolver(EditQuartoFormSchema),
@@ -132,7 +131,7 @@ export default function EditQuarto() {
                 error={errors.numero}
                 {...register("numero")}
                 value={numero}
-                onChange={(event) => setNumero(event.target.value)}
+                onChange={(event) => setNumero(Number(event.target.value))}
               />
               <Input
                 name="preco"
@@ -167,17 +166,20 @@ export default function EditQuarto() {
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <FormLabel htmlFor="hotel">Hotel</FormLabel>
+              
               <Select
                 name="hotel"
                 id="hotel"
                 placeholder="Selecione o hotel"
+                bgColor="white"
+                color="gray.900"
+                size="lg"
                 error={errors.hotel?.id}
                 value={hotel}
                 {...register("hotel.id")}
               >
                 {hoteis.map((hotel) => (
-                  <option value={hotel.id}>{hotel.name}</option>
+                  <option  value={hotel.id}>{hotel.nome}</option>
                 ))}
               </Select>
             </SimpleGrid>
