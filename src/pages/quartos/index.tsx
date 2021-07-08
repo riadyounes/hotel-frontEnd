@@ -89,7 +89,7 @@ export default function QuartoList() {
             leastDestructiveRef={cancelRef}
             onClose={onClose}
           >
-            <AlertDialogOverlay>
+            <AlertDialogOverlay color="gray.900">
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   Apagar Quarto
