@@ -98,7 +98,7 @@ export default function HospedeList() {
                     <Text>{hospede.nacionalidade}</Text>
                   </Td>
                   <Td>
-                    <Link href="/hospedes/edit">
+                    <Link href={`/hospedes/${hospede.id}/edit`}>
                       <Button
                         as="a"
                         size="sm"

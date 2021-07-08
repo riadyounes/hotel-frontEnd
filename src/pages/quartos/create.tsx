@@ -143,16 +143,18 @@ export default function CreateQuarto() {
             </SimpleGrid>
 
             <SimpleGrid minChildWidth="240px" spacing="8" width="100%">
-              <FormLabel htmlFor="hotel">Hotel</FormLabel>
+              
               <Select
                 name="hotel"
                 id="hotel"
+                bgColor="white"
+                color="gray.900"
                 placeholder="Selecione o hotel"
                 error={errors.hotel?.id}
                 {...register("hotel.id")}
               >
                 {hoteis.map((hotel) => (
-                  <option value={hotel.id}>{hotel.name}</option>
+                  <option value={hotel.id}>{hotel.nome}</option>
                 ))}
               </Select>
             </SimpleGrid>
